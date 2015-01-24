@@ -12,6 +12,7 @@
 int dispatcher (int *mode, unsigned int buff[], int rnum, int button, int havechr) {
         static int  disp;
         static int i,j;
+        static int speed_index;
         static int sequence_count;
         static int examine_count;
         static int havepress;
@@ -36,13 +37,14 @@ int dispatcher (int *mode, unsigned int buff[], int rnum, int button, int havech
                // if good increment *seq_ctr_ptr
                sequence_count = 1;
                examine_count  = 1;
+               speed_index = 0;
                *mode = PLAYBACK;
                break;
             }
             case PLAYBACK : {   
               if( i < sequence_count) {
                   disp = buff[i];
-                  if (output_delay (&disp) == 0) {                     
+                  if (output_delay (&disp, speed[speed_index]) == 0) {                     
                       sprintf(temp,"buffer data %i buffer index %i\n",buff[i],i);
                       Serial.println(temp);
                       disp = buff[i];
@@ -50,9 +52,15 @@ int dispatcher (int *mode, unsigned int buff[], int rnum, int button, int havech
                   }
               }
               else {
-                  if (output_delay (&disp) == 0) {
+                  if (output_delay (&disp, speed[0]) == 0) {
                       *mode = EXAMINEUSR;
                       i = 0;
+                      if (sequence_count == MEDIUM_SPEED_TH) {
+                         speed_index = 1;
+                      } 
+                      else if (sequence_count == HIGH_SPEED_TH) {
+                         speed_index = 2;
+                      }
                       sequence_count++;
                   }
               }
@@ -85,7 +93,7 @@ int dispatcher (int *mode, unsigned int buff[], int rnum, int button, int havech
                     examine_count++;
                     button = 0;
                     examine_ptr = buff;
-                    if (output_delay (&disp) == 0) {
+                    if (output_delay (&disp,speed[0]) == 0) {
                       disp = 0;
                     }
                     Serial.println("Done Sequence");
@@ -95,7 +103,7 @@ int dispatcher (int *mode, unsigned int buff[], int rnum, int button, int havech
             }
             case WAITB4PLAYBACK : {
                 disp = 0;
-                if (output_delay (&disp) == 0) {
+                if (output_delay (&disp,speed[0]) == 0) {
                     *mode = PLAYBACK;
                 }
                 break;

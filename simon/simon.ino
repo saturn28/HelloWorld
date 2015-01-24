@@ -8,6 +8,12 @@
 *******************************************************************************/
 #include "defines.h"
 #include <stdio.h>
+const long int speed[] = {
+   PLAYBACK_WAIT_TIME_SLOW,
+   PLAYBACK_WAIT_TIME_MED ,
+   PLAYBACK_WAIT_TIME_FAST
+};
+   
 void setup () {
   // Open serial communications and wait for port to open:
   Serial.begin(BAUDRATE);

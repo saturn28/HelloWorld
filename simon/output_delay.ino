@@ -8,7 +8,7 @@
 #include "defines.h"
 #define BLANKIT 1
 #define DONE 2
-int output_delay (int *dispval_ptr) {
+int output_delay (int *dispval_ptr, long int wait_time) {
     int to_stat;
     static long int init_time;
     static int init_state;
@@ -32,7 +32,7 @@ int output_delay (int *dispval_ptr) {
     else {
         current_time = millis ();
         *dispval_ptr = orig_disp_val;   //Restore display value and hold
-        if ((current_time - init_time > PLAYBACK_WAIT_TIME - BLANK_TIME) && (init_time < current_time)) {            
+        if ((current_time - init_time > wait_time - BLANK_TIME) && (init_time < current_time)) {            
             init_state = 0;
         }
     }

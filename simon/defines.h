@@ -18,6 +18,8 @@
 #define PLAYBACK_WAIT_TIME_SLOW  500L
 #define PLAYBACK_WAIT_TIME_MED  250L
 #define PLAYBACK_WAIT_TIME_FAST  125L
+#define MEDIUM_SPEED_TH              6
+#define HIGH_SPEED_TH                10
 #define BLANK_TIME  100L
 #define TONE_PIN     8
 
