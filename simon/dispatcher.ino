@@ -28,6 +28,8 @@ int dispatcher (int *mode, unsigned int buff[], int rnum, int button, int havech
                *mode = INPLAY;
                examine_ptr = buff;
                disp = 0;
+               button = 0;
+               j = 0;
                break;
             }
             case INPLAY : {
@@ -55,6 +57,7 @@ int dispatcher (int *mode, unsigned int buff[], int rnum, int button, int havech
                   if (output_delay (&disp, speed[0]) == 0) {
                       *mode = EXAMINEUSR;
                       i = 0;
+                      button = 0;
                       if (sequence_count == MEDIUM_SPEED_TH) {
                          speed_index = 1;
                       } 
@@ -83,7 +86,7 @@ int dispatcher (int *mode, unsigned int buff[], int rnum, int button, int havech
                             Serial.println(temp);                                   
                             sprintf(temp,"You should have entered %i",*examine_ptr);
                             Serial.println(temp);
-                            disp = *examine_ptr;   
+                            disp = *examine_ptr;
                         }
                     }        
                 }
