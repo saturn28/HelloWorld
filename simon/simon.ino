@@ -45,14 +45,16 @@ void loop () {
     static int random_num;
     static int button;
     static int playback_index;
+    bool reset_seq_buf_index;
     int sequence_count;
     int led_code;
     char temp[80];
     static int ready;
     if (ready == 1) {
         button = read_input_from_kbd();
+        reset_seq_buf_index = (button == START) ? 1 : 0;
         random_num = random_gen ();
-        write_to_follow_seq_buf (seq_to_follow_buf, random_num, 0);
+        write_to_follow_seq_buf (seq_to_follow_buf, random_num, reset_seq_buf_index);
         if (button != 0) {
             sprintf(temp,"button = %i",button);
             Serial.println(temp);
