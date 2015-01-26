@@ -22,6 +22,7 @@
 #define HIGH_SPEED_TH                10
 #define BLANK_TIME  100L
 #define TONE_PIN     8
+#define TIMEOUT_TIME 5000L
 
 #define DIAGNOSTIC 16    
 #define START      17 
