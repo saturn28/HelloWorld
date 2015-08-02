@@ -16,6 +16,7 @@ int dispatcher (int *mode, unsigned int buff[], int rnum, int button, int havech
         static int sequence_count;
         static int examine_count;
         static int havepress;
+        static int timeout_status;
         static unsigned int *examine_ptr = NULL;
         int     a,b;
         char        temp[80];
@@ -58,6 +59,7 @@ int dispatcher (int *mode, unsigned int buff[], int rnum, int button, int havech
                       *mode = EXAMINEUSR;
                       i = 0;
                       button = 0;
+                      timeout (&timeout_status,1);
                       if (sequence_count == MEDIUM_SPEED_TH) {
                          speed_index = 1;
                       } 
@@ -72,15 +74,16 @@ int dispatcher (int *mode, unsigned int buff[], int rnum, int button, int havech
             case EXAMINEUSR : {
                 if (j < examine_count)  {
                     a = button;
-                    disp = 0;               
-                    if (a <= 4 && a > 0 && havechr == 1) {
+                    disp = 0;
+                    if (a <= 4 && a > 0 && havechr == 1) {                       
                         disp = a;
-                        if (a == *examine_ptr) {    
-                        button = 0;
-                        j++;
-                        examine_ptr++;
+                        timeout (&timeout_status,1);
+                        if (a == *examine_ptr) {
+                            button = 0;
+                            j++;
+                            examine_ptr++;
                         }
-                        else {                          //Failure
+                        else if (a != *examine_ptr) {                          //Failure
                             Serial.println("Error");
                             sprintf(temp,"You entered %i",button);
                             Serial.println(temp);                                   
@@ -88,7 +91,18 @@ int dispatcher (int *mode, unsigned int buff[], int rnum, int button, int havech
                             Serial.println(temp);
                             disp = *examine_ptr;
                         }
-                    }        
+                    }
+                    else {
+                       timeout (&timeout_status,0);
+                       if (timeout_status == 1) {
+                            Serial.println("Error");
+                            sprintf(temp,"Time out status is %i",timeout_status);
+                            Serial.println(temp);                                   
+                            sprintf(temp,"You should have entered %i faster",*examine_ptr);
+                            Serial.println(temp);
+                            disp = *examine_ptr;
+                       }
+                    }
                 }
                 else {
                     *mode = WAITB4PLAYBACK;
