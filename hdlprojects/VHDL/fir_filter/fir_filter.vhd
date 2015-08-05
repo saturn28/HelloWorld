@@ -21,7 +21,8 @@ entity fir_filter is
     port (
         d_out    : out std_logic_vector (15 downto 0);
         x        : in  std_logic_vector (15 downto 0);
-        clk      : in  std_logic;
+        clk      : in  std_logic;       -- always there synchronous FPGA clock
+        sclk     : in std_logic;        -- sampling clock
         reset_n  : in  std_logic;
         valid    : in  std_logic
         );
@@ -34,6 +35,10 @@ architecture behavior of fir_filter is
     signal      coeff_add : std_logic_vector(5 downto 0);
 
     signal      x_int : integer;
+   
+    signal      sclk_del    :   std_logic;
+    signal      sclk_del2   :   std_logic;
+    signal      sclk_rising :   std_logic;
     
     signal      temp0,temp1,temp2,temp3,temp4,temp5,temp6,temp7,temp8,
                 temp9,temp10,temp11,temp12,temp13,temp14,temp15,temp16,temp17,temp18,
@@ -111,7 +116,7 @@ begin
     POINTER : process (clk,reset_n) begin
         if (reset_n = '0') then
             coeff_add <= "000000";
-        elsif (clk'event and clk = '1') then
+        elsif (clk'event and clk = '1' and sclk_rising = '1') then
             if coeff_add = "111111" then
                 coeff_add <= "000001";
             elsif (valid = '1') then
@@ -119,6 +124,16 @@ begin
             end if;
         end if;
     end process;
+    
+    SCLKEDGEDET : PROCESS (clk,reset_n) BEGIN
+        if (reset_n = '0') then
+            sclk_del    <=  '0';
+            sclk_del2   <=  '0';
+        elsif (clk'event and clk = '1') then
+            sclk_del    <=  sclk;
+            sclk_del2   <=  sclk_del;
+        end if;
+    END PROCESS;
 
     SHIFTANDMULT : process(clk,reset_n) begin
         if(reset_n = '0') then
@@ -153,7 +168,7 @@ begin
             z43 <= 0;z44 <= 0;z45 <= 0;z46 <= 0;z47 <= 0;z48 <= 0;
             z49 <= 0;
             z50 <= 0;
-       elsif (clk'event and clk = '1' and valid = '1') then
+       elsif (clk'event and clk = '1' and valid = '1' and sclk_rising = '1') then
             z0 <= x_int;z1 <= z0;z2 <= z1;z3 <= z2;z4 <= z3;z5 <= z4;z6 <= z5;
             z7 <= z6;z8 <= z7;z9 <= z8;z10 <= z9;z11 <= z10;z12 <= z11;
             z13 <= z12;z14 <= z13;z15 <= z14;
@@ -230,6 +245,7 @@ begin
     x_int <= to_integer(signed(x));
     d_outx32768 <= std_logic_vector(to_signed(y,32));
     d_out <= d_outx32768(16 downto 1);
+    sclk_rising <=  sclk_del and not sclk_del2;
 end behavior;
 
 
