@@ -1,3 +1,5 @@
+vcom -work work shiftnmult.vhd
+vcom -work work adder.vhd
 vcom -work work fir_filter.vhd
 vcom -work work fir_filter_tb.vhd
 vsim work.fir_filter_tb
