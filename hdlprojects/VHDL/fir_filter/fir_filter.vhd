@@ -31,7 +31,7 @@ architecture behavior of fir_filter is
             reset_n : in    std_logic;
             valid   : in    std_logic;
             en_shift    : in    std_logic; -- connect to sclk rising
-            b       : in    integer;
+            coeff   : in    integer;
             temp    : out   integer;
             zin     : in    integer;
             zout    : out   integer
@@ -83,7 +83,7 @@ begin
                 reset_n     =>  reset_n,
                 valid       =>  valid,
                 en_shift    =>  sclk_rising,
-                b           =>  b(I),
+                coeff       =>  b(I),
                 temp        =>  temp(I),
                 zin         =>  x_int,
                 zout        =>  z(0)        
@@ -97,7 +97,7 @@ begin
                 reset_n     =>  reset_n,
                 valid       =>  valid,
                 en_shift    =>  sclk_rising,
-                b           =>  b(I),
+                coeff       =>  b(I),
                 temp        =>  temp(I),
                 zin         =>  z(I-1),
                 zout        =>  z(I)        
